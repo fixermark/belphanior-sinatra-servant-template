@@ -39,6 +39,14 @@ set :port, CONFIG.get("port")
 # To simplify functionality, we make every request handle synchronously.
 enable :lock
 
+get '/config/:name' do
+  return [200, CONFIG.get(params[:name])]
+end
+
+get '/config' do
+  return [200, CONFIG.to_json]
+end
+
 get '/' do
   "Hello, world!"
 end  
