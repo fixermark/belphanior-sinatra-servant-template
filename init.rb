@@ -32,6 +32,8 @@ end
 config_string = File.read(COMMAND_LINE[:config])
 
 CONFIG = ServantConfig.new(config_string)
+CONFIG.set_readonly "bind"
+CONFIG.set_readonly "port"
 
 set :bind, CONFIG.get("bind")
 set :port, CONFIG.get("port")
@@ -45,6 +47,16 @@ end
 
 get '/config' do
   return [200, CONFIG.to_json]
+end
+
+post '/config/:name' do
+  old_value = CONFIG.get(params[:name])
+  begin
+    CONFIG.set(params[:name], request.body.read)
+    return [200, old_value]
+  rescue ServantConfigException => e
+    return [500, "Could not write config: #{e}"]
+  end
 end
 
 get '/' do
