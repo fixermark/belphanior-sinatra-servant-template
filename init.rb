@@ -41,6 +41,12 @@ set :port, CONFIG.get("port")
 # To simplify functionality, we make every request handle synchronously.
 enable :lock
 
+def write_config_file
+  out = File.open(COMMAND_LINE[:config], "w")
+  out.write(CONFIG.to_json)
+  out.close
+end
+
 get '/config/:name' do
   return [200, CONFIG.get(params[:name])]
 end
@@ -53,6 +59,7 @@ post '/config/:name' do
   old_value = CONFIG.get(params[:name])
   begin
     CONFIG.set(params[:name], request.body.read)
+    write_config_file
     return [200, old_value]
   rescue ServantConfigException => e
     return [500, "Could not write config: #{e}"]
