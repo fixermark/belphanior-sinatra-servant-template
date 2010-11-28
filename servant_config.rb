@@ -4,22 +4,22 @@
 
 require 'json'
 
-class ConfigException < RuntimeError
+class ServantConfigException < RuntimeError
 end
 
-class Config
+class ServantConfig
   def initialize(json_string)
     @config = JSON.parse(json_string)
     # validation: @config is a hash, keys are strings, vals are strings
     if (@config.class != {}.class)
-      raise ConfigException, 
-      "Config error: JSON string did not evaluate to an object",
+      raise ServantConfigException, 
+      "ServantConfig error: JSON string did not evaluate to an object",
       caller
     end
     @config.each{|key, value|
       if (value.class != "".class)
-        raise ConfigException,
-        ("Config error: JSON initialization string,"
+        raise ServantConfigException,
+        ("ServantConfig error: JSON initialization string,"
          "value for key '#{key}' is type '#{value.class}'"),
         caller
       end
@@ -40,7 +40,7 @@ class Config
     key = key.to_s
     value = value.to_s
     if @readonly.include? key
-      raise ConfigException,
+      raise ServantConfigException,
       "Attempted to change read-only property '#{key}'",
       caller
     end

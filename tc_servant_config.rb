@@ -1,10 +1,10 @@
-require 'config'
 require 'json'
+require 'servant_config'
 require 'test/unit'
 
-class TestConfig < Test::Unit::TestCase
+class TestServantConfig < Test::Unit::TestCase
   def setup
-    @config = Config.new(
+    @config = ServantConfig.new(
 <<EOF
   {
     "ip":"127.0.0.1",
@@ -32,7 +32,7 @@ EOF
   def test_readonly
     @config.set_readonly("ip")
     assert(@config.is_readonly("ip"), true)
-    assert_raises (ConfigException) {
+    assert_raises (ServantConfigException) {
       @config.set("ip","127.0.0.10")
     }
   end
