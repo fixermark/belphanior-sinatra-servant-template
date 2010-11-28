@@ -23,5 +23,11 @@ EOF
     assert_equal(out["ip"],"127.0.0.1")
     assert_equal(out["port"], "80")
   end
+  def test_set
+    @config.set("bar","hi")
+    assert_equal(@config.get("bar"),"hi")
+    @config.set("number_of_pigs",3)
+    assert_equal(@config.get("number_of_pigs"),"3")
+  end
 end
 

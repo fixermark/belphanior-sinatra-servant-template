@@ -30,6 +30,13 @@ class Config
   def get(key)
     @config[key]
   end
+
+  def set(key, value)
+    key = key.to_s
+    value = value.to_s
+    @config[key]=value
+  end
+
   def to_json
     JSON.dump(@config)
   end
