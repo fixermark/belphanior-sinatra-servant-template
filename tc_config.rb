@@ -29,5 +29,12 @@ EOF
     @config.set("number_of_pigs",3)
     assert_equal(@config.get("number_of_pigs"),"3")
   end
+  def test_readonly
+    @config.set_readonly("ip")
+    assert(@config.is_readonly("ip"), true)
+    assert_raises (ConfigException) {
+      @config.set("ip","127.0.0.10")
+    }
+  end
 end
 

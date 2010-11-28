@@ -25,6 +25,11 @@ class Config
       end
     }
     @config.default ""
+    @readonly = []
+  end
+
+  def to_json
+    JSON.dump(@config)
   end
 
   def get(key)
@@ -34,11 +39,20 @@ class Config
   def set(key, value)
     key = key.to_s
     value = value.to_s
+    if @readonly.include? key
+      raise ConfigException,
+      "Attempted to change read-only property '#{key}'",
+      caller
+    end
     @config[key]=value
   end
 
-  def to_json
-    JSON.dump(@config)
+  def is_readonly(key)
+    @readonly.include? key
+  end
+
+  def set_readonly(key)
+    @readonly << key
   end
 end
 
