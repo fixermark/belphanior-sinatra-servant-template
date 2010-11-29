@@ -28,3 +28,11 @@ def get(uri)
   print "#{res.code}\n"
   print "#{res.body}\n"
 end
+
+def post(uri, postdata)
+  res = Net::HTTP.start($http_target.host, $http_target.port) {|http|
+    http.post(uri, postdata)
+  }
+  print "#{res.code}\n"
+  print "#{res.body}\n"
+end
