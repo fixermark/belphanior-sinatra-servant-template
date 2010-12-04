@@ -2,6 +2,7 @@ require 'ftools'
 require 'optparse'
 require 'servant_config'
 require 'sinatra'
+require 'json_out'
 
 DEFAULT_CONFIG_PATH = "servant_config"
 DEFAULT_CONFIG = <<EOF
@@ -41,6 +42,11 @@ set :port, CONFIG.get("port")
 # To simplify functionality, we make every request handle synchronously.
 enable :lock
 
+# Helper function: Tags a text object as a JSON-type
+def text_out_as_json(text_representation, status=200)
+  [status, {"Content-Type" => "application/json"}, text_representation]
+end
+
 def write_config_file
   out = File.open(COMMAND_LINE[:config], "w")
   out.write(CONFIG.to_json)
@@ -52,7 +58,7 @@ get '/config/:name' do
 end
 
 get '/config' do
-  return [200, CONFIG.to_json]
+  text_out_as_json(CONFIG.to_json)
 end
 
 post '/config/:name' do
@@ -89,5 +95,5 @@ add_command(
 
 
 get '/protocol' do
-  get_roles
+  text_out_as_json(get_roles)
 end
