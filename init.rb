@@ -66,7 +66,28 @@ post '/config/:name' do
   end
 end
 
+def add_route()
+  get '/test' do
+    "Test worked!"
+  end
+end
+
 get '/' do
+  add_route
   "Hello, world!"
 end  
 
+require 'role_builder'
+add_command(
+            :name => "test",
+            :description => "Test command.",
+            :arguments => [["test arg 1"], ["test arg 2","test description"]],
+            :return => "None.",
+            :usage => ["GET", "/hi/everybody", ""])
+
+
+
+
+get '/protocol' do
+  get_roles
+end
