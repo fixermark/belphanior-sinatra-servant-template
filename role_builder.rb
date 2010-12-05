@@ -24,12 +24,12 @@ module Sinatra
       name = params[:name] || 
         (raise BadParameterException, "Name parameter is required.")
       description = params[:description]
-      arguments = params[:arguments]
+      arguments = params[:arguments] || []
       return_info = params[:return]
       usage = params[:usage] || 
         (raise BadParameterException, "Must specify usage for #{name}")
       
-      new_command = {"name"=>name}
+      new_command = {"name" => (name.downcase)}
       if description
         new_command["description"] = description
       end
@@ -58,6 +58,11 @@ module Sinatra
 
     def get_roles()
       JSON.dump roles
+    end
+    # Needed for testing, because Sinatra doesn't appear to
+    # re-run self.registered(app) for every unit test.
+    def test_reset_roles()
+      set :roles, [{"description"=>"","commands"=>[]}]
     end
   end
   register RoleBuilder
