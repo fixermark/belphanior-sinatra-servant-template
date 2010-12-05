@@ -54,10 +54,12 @@ class TestRoleBuilder < Test::Unit::TestCase
   def test_identifier_case_insensitivity
     app.add_command(
       :name => "My command",
+      :arguments => [["Cap"]],
       :usage => ["get",
                  "/path",
                  "data"])
     result = JSON.parse(app.get_roles)
     assert_equal "my command", result[0]["commands"][0]["name"]
+    assert_equal "cap", result[0]["commands"][0]["arguments"][0]["name"]
   end
 end

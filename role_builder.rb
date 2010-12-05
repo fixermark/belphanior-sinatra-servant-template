@@ -36,7 +36,7 @@ module Sinatra
 
       new_command["arguments"]=[]
       arguments.each do |arg|
-        argument = {"name"=>arg[0]}
+        argument = {"name" => arg[0].downcase}
         if arg.length > 1
           argument["description"] = arg[1]
         end
