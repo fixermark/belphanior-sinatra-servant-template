@@ -3,17 +3,20 @@ require 'sinatra/base'
 
 module Sinatra
   module RoleBuilder
+    class BadParameterException < Exception
+    end
     def self.registered(app)
       app.set :roles, [{"description"=>"TODO: Fill this in", "commands"=>[] }]
     end
-
     # TODO: vet identifiers
     def add_command(params)
-      name = params[:name] || raise("Name parameter is required.")
+      name = params[:name] || 
+        (raise BadParameterException, "Name parameter is required.")
       description = params[:description]
       arguments = params[:arguments]
       return_info = params[:return]
-      usage = params[:usage] || raise("Must specify usage for #{name}")
+      usage = params[:usage] || 
+        (raise BadParameterException, "Must specify usage for #{name}")
       
       new_command = {"name"=>name}
       if description
