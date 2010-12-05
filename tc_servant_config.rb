@@ -32,7 +32,7 @@ EOF
   def test_readonly
     @config.set_readonly("ip")
     assert(@config.is_readonly("ip"), true)
-    assert_raises (ServantConfigException) {
+    assert_raises(ServantConfigException) {
       @config.set("ip","127.0.0.10")
     }
   end

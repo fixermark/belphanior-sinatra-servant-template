@@ -19,7 +19,7 @@ class ServantConfig
     @config.each{|key, value|
       if (value.class != "".class)
         raise ServantConfigException,
-        ("ServantConfig error: JSON initialization string,"
+        ("ServantConfig error: JSON initialization string, "+
          "value for key '#{key}' is type '#{value.class}'"),
         caller
       end
@@ -56,4 +56,3 @@ class ServantConfig
   end
 end
 
-# TODO: Write tests for config library
