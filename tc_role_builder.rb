@@ -13,7 +13,7 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def setup
-    Sinatra::Application.test_reset_roles
+    app.set :roles, [{"description"=>"","commands"=>[]}]
     @default_usage = [
                       "get",
                       "/path",
@@ -22,15 +22,15 @@ class TestRoleBuilder < Test::Unit::TestCase
 
   def test_add_command_fails_on_badparams
     assert_raise Sinatra::RoleBuilder::BadParameterException do
-      Sinatra::Application.add_command :usage => "Test"
+      app.add_command :usage => "Test"
     end
     assert_raise Sinatra::RoleBuilder::BadParameterException do
-      Sinatra::Application.add_command :name => "Test"
+      app.add_command :name => "Test"
     end
   end
 
   def test_add_command_adds_to_roles
-    Sinatra::Application.add_command( 
+    app.add_command( 
       :name => "test",
       :description => "My test data.",
       :arguments => [["arg1","An argument"],["arg2"]],
@@ -38,7 +38,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :usage => ["get",
                  "/path/to/test",
                  "my_data"])
-    result = JSON.parse(Sinatra::Application.get_roles)
+    result = JSON.parse(app.get_roles)
     command = result[0]["commands"][0]
     assert_equal command["name"], "test"
     assert_equal command["description"], "My test data."
@@ -52,12 +52,12 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def test_identifier_case_insensitivity
-    Sinatra::Application.add_command(
+    app.add_command(
       :name => "My command",
       :usage => ["get",
                  "/path",
                  "data"])
-    result = JSON.parse(Sinatra::Application.get_roles)
+    result = JSON.parse(app.get_roles)
     assert_equal "my command", result[0]["commands"][0]["name"]
   end
 end

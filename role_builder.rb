@@ -59,11 +59,6 @@ module Sinatra
     def get_roles()
       JSON.dump roles
     end
-    # Needed for testing, because Sinatra doesn't appear to
-    # re-run self.registered(app) for every unit test.
-    def test_reset_roles()
-      set :roles, [{"description"=>"","commands"=>[]}]
-    end
   end
   register RoleBuilder
 end
