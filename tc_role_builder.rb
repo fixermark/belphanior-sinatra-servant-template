@@ -98,7 +98,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       ("Output is " + params[:arg1] +", data is " + (request.body.read))
     end
     post '/test_command_binding_post/foo/success', "bar"
-    assert last_response.ok? 
+    assert last_response.ok?
     assert_equal "Output is foo, data is bar", last_response.body
   end
 end
