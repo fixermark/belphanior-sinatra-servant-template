@@ -64,14 +64,25 @@ module Sinatra
       if return_info
         new_command["return"] = {"description" => return_info}
       end
-
+      
+      new_command_method = usage[0]
+      new_command_path = usage[1]
+      new_command_data = usage[2]
       new_command["usage"] = {
-        "method" => usage[0],
-        "path" => usage[1],
-        "data" => usage[2]
+        "method" => new_command_method,
+        "path" => new_command_path,
+        "data" => new_command_data
       }
       
       roles[0]["commands"] << new_command
+
+      sinatra_path = RoleBuilderUtils.usage_string_to_sinatra_path(
+        new_command_path)
+      if new_command_method == "get"
+        get(sinatra_path, &blk)
+      elsif new_command_method == "post"
+        post(sinatra_path, &blk)
+      end
     end
 
     def get_roles()

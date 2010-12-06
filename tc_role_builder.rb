@@ -29,10 +29,10 @@ class TestRoleBuilder < Test::Unit::TestCase
 
   def test_add_command_fails_on_badparams
     assert_raise Sinatra::RoleBuilder::BadParameterException do
-      app.add_command :usage => "Test"
+      app.add_command :usage => "Test" do end
     end
     assert_raise Sinatra::RoleBuilder::BadParameterException do
-      app.add_command :name => "Test"
+      app.add_command :name => "Test" do end
     end
   end
 
@@ -44,7 +44,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :return => "Test return.",
       :usage => ["get",
                  "/path/to/test",
-                 "my_data"])
+                 "my_data"]) do end
     result = JSON.parse(app.get_roles)
     command = result[0]["commands"][0]
     assert_equal command["name"], "test"
@@ -64,7 +64,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :arguments => [["Cap"]],
       :usage => ["get",
                  "/path",
-                 "data"])
+                 "data"]) do end
     result = JSON.parse(app.get_roles)
     assert_equal "my command", result[0]["commands"][0]["name"]
     assert_equal "cap", result[0]["commands"][0]["arguments"][0]["name"]
@@ -72,18 +72,33 @@ class TestRoleBuilder < Test::Unit::TestCase
 
   def test_command_binding
     app.add_command(
-      :name => "test command binding",
+      :name => "test command binding 1",
       :arguments => [["arg1"]],
       :return => "Some stuff.",
       :usage => [
                  "get",
-                 "/test_command_binding/$(arg1)/success",
+                 "/test_command_binding_get/$(arg1)/success",
                  ""]
                     ) do
       ("Output is " + params[:arg1])
     end
-#    get '/test_command_binding/foo/success'
-#    assert last_response.ok?
-#    assert_equal "Output is foo", last_response.body
+    get '/test_command_binding_get/foo/success'
+    assert last_response.ok?
+    assert_equal "Output is foo", last_response.body
+
+    app.add_command(
+      :name => "test command binding 2",
+      :arguments => [["arg1","arg2"]],
+      :return => "Some stuff.",
+      :usage => [
+                 "post",
+                 "/test_command_binding_post/$(arg1)/success",
+                 "$(arg2)"]
+                    ) do
+      ("Output is " + params[:arg1] +", data is " + (request.body.read))
+    end
+    post '/test_command_binding_post/foo/success', "bar"
+    assert last_response.ok?
+    assert_equal "Output is foo, data is bar", last_response.body
   end
 end
