@@ -1,7 +1,25 @@
 require 'json'
 require 'sinatra/base'
 
+module RoleBuilderUtils
+  # converts Belphanior-style "$(arg)" arguments to Sinatra-style
+  # ":arg" specifiers
+  def self.usage_string_to_sinatra_path(usage)
+    output = ""
+    usage.split("$").each { |substring|
+      if substring[0,1]=="("
+        substring[0]=":"
+        output += (substring.split(")").join)
+      else
+        output += substring
+      end
+    } 
+    output
+  end
+end
+
 module Sinatra
+
   module RoleBuilder
     class BadParameterException < Exception
     end
@@ -20,7 +38,7 @@ module Sinatra
     # -- method ("get", "post", etc.)
     # -- path ("/object/${my_object}")
     # -- data ("${my_data}")
-    def add_command(params)
+    def add_command(params, &blk)
       name = params[:name] || 
         (raise BadParameterException, "Name parameter is required.")
       description = params[:description]

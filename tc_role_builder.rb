@@ -4,9 +4,10 @@ require 'test/unit'
 require 'rack/test'
 require 'json'
 
-  ENV['RACK_ENV'] = 'test'
+ENV['RACK_ENV'] = 'test'
 
 class TestRoleBuilder < Test::Unit::TestCase
+  include Rack::Test::Methods
 
   def app
     Sinatra::Application
@@ -18,6 +19,12 @@ class TestRoleBuilder < Test::Unit::TestCase
                       "get",
                       "/path",
                       "data"]
+  end
+
+  def test_role_builder_utils_usage_string_to_sinatra_patch
+    assert_equal "/test/:value/test/:value2",
+    RoleBuilderUtils.usage_string_to_sinatra_path(
+      "/test/$(value)/test/$(value2)")
   end
 
   def test_add_command_fails_on_badparams
@@ -61,5 +68,22 @@ class TestRoleBuilder < Test::Unit::TestCase
     result = JSON.parse(app.get_roles)
     assert_equal "my command", result[0]["commands"][0]["name"]
     assert_equal "cap", result[0]["commands"][0]["arguments"][0]["name"]
+  end
+
+  def test_command_binding
+    app.add_command(
+      :name => "test command binding",
+      :arguments => [["arg1"]],
+      :return => "Some stuff.",
+      :usage => [
+                 "get",
+                 "/test_command_binding/$(arg1)/success",
+                 ""]
+                    ) do
+      ("Output is " + params[:arg1])
+    end
+#    get '/test_command_binding/foo/success'
+#    assert last_response.ok?
+#    assert_equal "Output is foo", last_response.body
   end
 end
