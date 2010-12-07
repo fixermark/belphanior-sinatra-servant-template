@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'role_builder'
+require 'belphanior/servant/role_builder'
 require 'test/unit'
 require 'rack/test'
 require 'json'
