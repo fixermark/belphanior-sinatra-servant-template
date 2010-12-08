@@ -1,5 +1,5 @@
 require 'json'
-require 'belphanior/servant/servant_config'
+require 'belphanior/servant/servant_config_class'
 require 'test/unit'
 
 class TestServantConfig < Test::Unit::TestCase
