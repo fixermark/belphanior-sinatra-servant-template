@@ -1,10 +1,10 @@
 require 'json'
-require 'belphanior/servant/servant_config_class'
+require 'belphanior/servant/servant_config_db'
 require 'test/unit'
 
-class TestServantConfig < Test::Unit::TestCase
+class TestServantConfigDb < Test::Unit::TestCase
   def setup
-    @config = ServantConfig.new(
+    @config = ServantConfigDb.new(
 <<EOF
   {
     "ip":"127.0.0.1",

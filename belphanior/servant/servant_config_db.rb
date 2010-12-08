@@ -7,7 +7,7 @@ require 'json'
 class ServantConfigException < RuntimeError
 end
 
-class ServantConfig
+class ServantConfigDb
   def initialize(json_string)
     @config = JSON.parse(json_string)
     # validation: @config is a hash, keys are strings, vals are strings

@@ -4,7 +4,6 @@ require 'servant_config'
 require 'sinatra'
 require 'json_out'
 
-DEFAULT_CONFIG_PATH = "servant_config"
 DEFAULT_CONFIG = <<EOF
 {
   "bind" : "127.0.0.1",
@@ -42,11 +41,6 @@ set :port, CONFIG.get("port")
 # To simplify functionality, we make every request handle synchronously.
 enable :lock
 
-# Helper function: Tags a text object as a JSON-type
-def text_out_as_json(text_representation, status=200)
-  [status, {"Content-Type" => "application/json"}, text_representation]
-end
-
 def write_config_file
   out = File.open(COMMAND_LINE[:config], "w")
   out.write(CONFIG.to_json)
@@ -55,10 +49,6 @@ end
 
 get '/config/:name' do
   return [200, CONFIG.get(params[:name])]
-end
-
-get '/config' do
-  text_out_as_json(CONFIG.to_json)
 end
 
 post '/config/:name' do
