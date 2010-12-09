@@ -17,7 +17,7 @@ class TestServantConfig < Test::Unit::TestCase
 
   def setup
     app.set :servant_config_file, SERVANT_CONFIG_FILE
-    app.set :servant_config, ServantConfigDb.new(
+    app.set :servant_config_db, ServantConfigDb.new(
 <<EOF
   {
     "ip":"127.0.0.1",
@@ -68,7 +68,7 @@ EOF
   end
 
   def test_readonly_block
-    app.servant_config.set_readonly('port')
+    app.servant_config_db.set_readonly('port')
     post '/config/port', '81'
     assert_equal 500, last_response.status
   end

@@ -1,5 +1,6 @@
 require 'json'
 require 'sinatra/base'
+require 'belphanior/servant/belphanior_servant_helper'
 
 module RoleBuilderUtils
   # converts Belphanior-style "$(arg)" arguments to Sinatra-style
@@ -25,6 +26,10 @@ module Sinatra
     end
     def self.registered(app)
       app.set :roles, [{"description"=>"TODO: Fill this in", "commands"=>[] }]
+      app.get '/protocol' do
+        BelphaniorServantHelper.text_out_as_json(get_roles)
+      end
+
     end
 
     # Adds a command to the role, and registers the
