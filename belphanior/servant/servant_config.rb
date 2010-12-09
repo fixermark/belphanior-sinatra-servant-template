@@ -23,16 +23,9 @@ EOF
       )
       puts "Adding config rule"
       app.get '/config' do
-        "hello"
-#        ServantConfigHelper.text_out_as_json(settings.servant_config.to_json)
+        ServantConfigHelper.text_out_as_json(settings.servant_config.to_json)
       end
       puts "Config rule added."
-    end
-    
-    def test
-      get '/config' do
-        ServantConfigHelper::text_out_as_json(options.servant_config.to_json)
-      end
     end
   end
   register ServantConfig

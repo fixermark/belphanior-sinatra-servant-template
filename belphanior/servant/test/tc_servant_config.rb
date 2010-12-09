@@ -24,7 +24,6 @@ class TestServantConfig < Test::Unit::TestCase
   }
 EOF
     )
-    app.test
   end
 
   def test_get_all_configs
