@@ -66,4 +66,10 @@ EOF
     result = JSON.parse(settings_file.read)
     assert_equal 'hi', result["test"]
   end
+
+  def test_readonly_block
+    app.servant_config.set_readonly('port')
+    post '/config/port', '81'
+    assert_equal 500, last_response.status
+  end
 end
