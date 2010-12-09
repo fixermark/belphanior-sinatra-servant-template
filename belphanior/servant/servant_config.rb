@@ -7,6 +7,11 @@ module ServantConfigHelper
   def self.text_out_as_json(text_representation, status=200)
     [status, {"Content-Type" => "application/json"}, text_representation]
   end
+  def self.write_config_file(file_path, config)
+    out = File.open(file_path, "w")
+    out.write(config.to_json)
+    out.close
+  end
 end
 
 module Sinatra
@@ -28,6 +33,18 @@ EOF
 
       app.get '/config/:name' do
         [200, settings.servant_config.get(params[:name])]
+      end
+
+      app.post '/config/:name' do
+        old_value = settings.servant_config.get(params[:name])
+        begin
+          settings.servant_config.set(params[:name], request.body.read)
+          ServantConfigHelper.write_config_file(
+            settings.servant_config_file, settings.servant_config)
+          return [200, old_value]
+        rescue ServantConfigException => e
+          return [500, "Could not write config: #{e}"]
+        end
       end
     end
   end

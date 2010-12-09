@@ -39,4 +39,12 @@ EOF
     assert_equal 200, last_response.status
     assert_equal "80", last_response.body
   end
+
+  def test_write_config
+    post '/config/test', "hi"
+    assert_equal 200, last_response.status
+    get '/config/test'
+    assert_equal 200, last_response.status
+    assert_equal 'hi', last_response.body
+  end
 end
