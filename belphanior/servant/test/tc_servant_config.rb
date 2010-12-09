@@ -25,12 +25,20 @@ class TestServantConfig < Test::Unit::TestCase
   }
 EOF
     )
+    app.load_servant_config
   end
 
   def teardown
     if File.exist? SERVANT_CONFIG_FILE
       File.delete SERVANT_CONFIG_FILE
     end
+  end
+
+  def test_config_initialize
+    validate = File.open(SERVANT_CONFIG_FILE, "r")
+    content = JSON.parse(validate.read)
+    assert_equal "127.0.0.1", content["ip"]
+    assert_equal "80", content["port"]
   end
 
   def test_get_all_configs
