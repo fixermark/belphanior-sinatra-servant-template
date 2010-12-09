@@ -9,13 +9,14 @@ ENV['RACK_ENV'] = 'test'
 
 class TestServantConfig < Test::Unit::TestCase
   include Rack::Test::Methods
-
+  SERVANT_CONFIG_FILE = "/tmp/tc_servant_config_out.json"
+  
   def app
     Sinatra::Application
   end
 
   def setup
-    app.set :servant_config_file, "/tmp/tc_servant_config_out.json"
+    app.set :servant_config_file, SERVANT_CONFIG_FILE
     app.set :servant_config, ServantConfigDb.new(
 <<EOF
   {
@@ -24,6 +25,12 @@ class TestServantConfig < Test::Unit::TestCase
   }
 EOF
     )
+  end
+
+  def teardown
+    if File.exist? SERVANT_CONFIG_FILE
+      File.delete SERVANT_CONFIG_FILE
+    end
   end
 
   def test_get_all_configs
@@ -46,5 +53,9 @@ EOF
     get '/config/test'
     assert_equal 200, last_response.status
     assert_equal 'hi', last_response.body
+    assert(File.exist? SERVANT_CONFIG_FILE)
+    settings_file = File.open(app.servant_config_file, 'r')
+    result = JSON.parse(settings_file.read)
+    assert_equal 'hi', result["test"]
   end
 end
