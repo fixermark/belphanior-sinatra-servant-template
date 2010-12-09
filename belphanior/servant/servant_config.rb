@@ -21,11 +21,14 @@ module Sinatra
   }
 EOF
       )
-      puts "Adding config rule"
+      # TODO: read stashed config file
       app.get '/config' do
         ServantConfigHelper.text_out_as_json(settings.servant_config.to_json)
       end
-      puts "Config rule added."
+
+      app.get '/config/:name' do
+        [200, settings.servant_config.get(params[:name])]
+      end
     end
   end
   register ServantConfig

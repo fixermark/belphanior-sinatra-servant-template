@@ -33,4 +33,10 @@ EOF
     assert_equal("127.0.0.1", result["ip"])
     assert_equal("80", result["port"])
   end
+
+  def test_get_specific_config
+    get '/config/port'
+    assert_equal 200, last_response.status
+    assert_equal "80", last_response.body
+  end
 end

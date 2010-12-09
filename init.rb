@@ -47,10 +47,6 @@ def write_config_file
   out.close
 end
 
-get '/config/:name' do
-  return [200, CONFIG.get(params[:name])]
-end
-
 post '/config/:name' do
   old_value = CONFIG.get(params[:name])
   begin
