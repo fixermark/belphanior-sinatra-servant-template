@@ -24,13 +24,27 @@ set :port, servant_config.get("port")
 enable :lock
 
 get '/' do
-  "Hello, world!"
+  server_name = servant_config.get("server_name") || "Default"
+  <<EOF
+<html>
+  <head>
+  <title>Belphanior Servant: #{server_name}</title>
+  </head>
+  <body>
+    <h1>Belphanior Servant Online</h1>
+    <h2>#{server_name}</h2>
+    <p>Hello! I am #{server_name}, and I am happy to serve you.</p>
+    <p>To learn more about what I can do, check my 
+       <a href="/protocol">protocol</a>.</p>
+    <p>Want to know my settings? Check my <a href="/config">config</a>.
+  </body>
+EOF
 end  
 
-
-add_command(
-            :name => "test",
-            :description => "Test command.",
-            :arguments => [["test arg 1"], ["test arg 2","test description"]],
-            :return => "None.",
-            :usage => ["GET", "/hi/everybody", ""])
+# To add commands, use the following style:
+# add_command(
+#            :name => "test",
+#            :description => "Test command.",
+#            :arguments => [["test arg 1"], ["test arg 2","test description"]],
+#            :return => "None.",
+#            :usage => ["GET", "/hi/everybody", ""])
