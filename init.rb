@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'ftools'
 require 'optparse'
 require 'belphanior/servant/servant_config'
