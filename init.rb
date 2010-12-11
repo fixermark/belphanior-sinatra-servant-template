@@ -24,7 +24,7 @@ set :port, servant_config.get("port")
 enable :lock
 
 get '/' do
-  server_name = servant_config.get("server_name") || "Default"
+  server_name = servant_config.get("server_name") || "<TODO: set name>"
   <<EOF
 <html>
   <head>
