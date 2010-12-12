@@ -12,20 +12,25 @@ OptionParser.new { |opts|
   end
 }
 
-load_servant_config
+def init
+  load_servant_config
 
-servant_config.set_readonly "bind"
-servant_config.set_readonly "port"
+  # readonly because changing them involves rebooting the server, so the
+  # change cannot be honored.
+  servant_config.set_readonly "bind"
+  servant_config.set_readonly "port"
 
-set :bind, servant_config.get("bind")
-set :port, servant_config.get("port")
+  set :bind, servant_config.get("bind")
+  set :port, servant_config.get("port")
 
-# To simplify functionality, we make every request handle synchronously.
-enable :lock
+  # To simplify functionality, we make every request handle synchronously.
+  enable :lock
 
-get '/' do
-  server_name = servant_config.get("server_name") || "<TODO: set name>"
-  <<EOF
+  # default handler for top-level index. A user-defined top-level index
+  # created before servant.init is called would override this.
+  get '/' do
+    server_name = servant_config.get("server_name") || "<TODO: set name>"
+    <<EOF
 <html>
   <head>
   <title>Belphanior Servant: #{server_name}</title>
@@ -39,7 +44,8 @@ get '/' do
     <p>Want to know my settings? Check my <a href="/config">config</a>.
   </body>
 EOF
-end  
+  end  
+end
 
 # To add commands, use the following style:
 # add_command(
