@@ -3,34 +3,38 @@ require 'ftools'
 require 'optparse'
 require 'belphanior/servant/servant_config'
 require 'belphanior/servant/role_builder'
-require 'sinatra'
+require 'sinatra/base'
 
-OptionParser.new { |opts|
-  opts.on('-c', '--config-file', 
-          'Specify the configuration file for the servant.') do |file|
-    set :servant_config_file, file
-  end
-}
+module Sinatra
+  module Servant
+    def self.registered(app)
 
-def init
-  load_servant_config
-
-  # readonly because changing them involves rebooting the server, so the
-  # change cannot be honored.
-  servant_config.set_readonly "bind"
-  servant_config.set_readonly "port"
-
-  set :bind, servant_config.get("bind")
-  set :port, servant_config.get("port")
-
-  # To simplify functionality, we make every request handle synchronously.
-  enable :lock
-
-  # default handler for top-level index. A user-defined top-level index
-  # created before servant.init is called would override this.
-  get '/' do
-    server_name = servant_config.get("server_name") || "<TODO: set name>"
-    <<EOF
+      OptionParser.new { |opts|
+        opts.on('-c', '--config-file', 
+                'Specify the configuration file for the servant.') do |file|
+          set :servant_config_file, file
+        end
+      }
+    end
+    
+    def servant_init
+      load_servant_config
+      # readonly because changing them involves rebooting the server, so the
+      # change cannot be honored.
+      servant_config.set_readonly "bind"
+      servant_config.set_readonly "port"
+      
+      set :bind, servant_config.get("bind")
+      set :port, servant_config.get("port")
+      
+      # To simplify functionality, we make every request handle synchronously.
+      enable :lock
+      
+      # default handler for top-level index. A user-defined top-level index
+      # created before servant.init is called would override this.
+      get '/' do
+        server_name = servant_config.get("server_name") || "<TODO: set name>"
+        <<EOF
 <html>
   <head>
   <title>Belphanior Servant: #{server_name}</title>
@@ -44,7 +48,10 @@ def init
     <p>Want to know my settings? Check my <a href="/config">config</a>.
   </body>
 EOF
-  end  
+      end  
+    end
+  end
+  register Servant
 end
 
 # To add commands, use the following style:
