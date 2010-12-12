@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.files = [ "belphanior-servant.gemspec",
               "lib/belphanior/servant/belphanior_servant_helper.rb",
               "lib/belphanior/servant/role_builder.rb",
-              "lib/belphanior/servant/servant.rb"
+              "lib/belphanior/servant/servant.rb",
               "lib/belphanior/servant/servant_config_db.rb",
               "lib/belphanior/servant/servant_config.rb" ]
   s.test_files = Dir.glob('lib/belphanior/servant/test/tc_*.rb')
