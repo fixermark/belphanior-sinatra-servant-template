@@ -25,7 +25,7 @@ module Sinatra
     class BadParameterException < Exception
     end
     def self.registered(app)
-      app.set :roles, [{"description"=>"TODO: Fill this in", "commands"=>[] }]
+      app.set :roles, [{"name"=>"unnamed","description"=>"TODO: Fill this in", "commands"=>[] }]
       app.get '/protocol' do
         BelphaniorServantHelper.text_out_as_json(get_roles)
       end

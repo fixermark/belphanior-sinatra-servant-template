@@ -9,7 +9,7 @@ ENV['RACK_ENV'] = 'test'
 
 class TestServantConfig < Test::Unit::TestCase
   include Rack::Test::Methods
-  SERVANT_CONFIG_FILE = "/tmp/tc_servant_config_out.json"
+  SERVANT_CONFIG_FILE = Dir.tmpdir << "/tc_servant_config_out.json"
   
   def app
     Sinatra::Application
@@ -37,6 +37,7 @@ EOF
   def test_config_initialize
     validate = File.open(SERVANT_CONFIG_FILE, "r")
     content = JSON.parse(validate.read)
+    validate.close
     assert_equal "127.0.0.1", content["ip"]
     assert_equal "80", content["port"]
   end
@@ -64,6 +65,7 @@ EOF
     assert(File.exist? SERVANT_CONFIG_FILE)
     settings_file = File.open(app.servant_config_file, 'r')
     result = JSON.parse(settings_file.read)
+    settings_file.close
     assert_equal 'hi', result["test"]
   end
 
