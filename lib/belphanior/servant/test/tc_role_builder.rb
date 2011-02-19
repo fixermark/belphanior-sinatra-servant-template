@@ -16,7 +16,7 @@ class TestRoleBuilder < Test::Unit::TestCase
   def setup
     app.set :roles, [{"description"=>"","commands"=>[]}]
     @default_usage = [
-                      "get",
+                      "GET",
                       "/path",
                       "data"]
   end
@@ -42,7 +42,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :description => "My test data.",
       :arguments => [["arg1","An argument"],["arg2"]],
       :return => "Test return.",
-      :usage => ["get",
+      :usage => ["GET",
                  "/path/to/test",
                  "my_data"]) do end
     result = JSON.parse(app.get_roles)
@@ -53,7 +53,7 @@ class TestRoleBuilder < Test::Unit::TestCase
     assert_equal command["arguments"][0]["description"], "An argument"
     assert_equal command["arguments"][1]["name"], "arg2"
     assert_equal command["return"]["description"], "Test return."
-    assert_equal command["usage"]["method"], "get"
+    assert_equal command["usage"]["method"], "GET"
     assert_equal command["usage"]["path"], "/path/to/test"
     assert_equal command["usage"]["data"], "my_data"
   end
@@ -62,7 +62,7 @@ class TestRoleBuilder < Test::Unit::TestCase
     app.add_command(
       :name => "My command",
       :arguments => [["Cap"]],
-      :usage => ["get",
+      :usage => ["GET",
                  "/path",
                  "data"]) do end
     result = JSON.parse(app.get_roles)
@@ -76,7 +76,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :arguments => [["arg1"]],
       :return => "Some stuff.",
       :usage => [
-                 "get",
+                 "GET",
                  "/test_command_binding_get/$(arg1)/success",
                  ""]
                     ) do
@@ -91,7 +91,7 @@ class TestRoleBuilder < Test::Unit::TestCase
       :arguments => [["arg1","arg2"]],
       :return => "Some stuff.",
       :usage => [
-                 "post",
+                 "POST",
                  "/test_command_binding_post/$(arg1)/success",
                  "$(arg2)"]
                     ) do
@@ -100,5 +100,18 @@ class TestRoleBuilder < Test::Unit::TestCase
     post '/test_command_binding_post/foo/success', "bar"
     assert last_response.ok?
     assert_equal "Output is foo, data is bar", last_response.body
+  end
+  def test_command_binding_unknown_method
+    assert_raise (Sinatra::RoleBuilder::BadParameterException) {
+      app.add_command(
+                      :name => "test command binding 1",
+                      :arguments => [["arg1"]],
+                      :return => "Some stuff.",
+                      :usage => [
+                                 "FOO",
+                                 "/test_command_binding_get/$(arg1)/success",
+                                 ""]
+                      ) do "Hello, world!" end
+    }
   end
 end

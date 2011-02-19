@@ -83,10 +83,13 @@ module Sinatra
 
       sinatra_path = RoleBuilderUtils.usage_string_to_sinatra_path(
         new_command_path)
-      if new_command_method == "get"
+      if new_command_method == "GET"
         get(sinatra_path, &blk)
-      elsif new_command_method == "post"
+      elsif new_command_method == "POST"
         post(sinatra_path, &blk)
+      else
+        (raise BadParameterException, 
+         "Unknown method '"+new_command_method+"'.")
       end
     end
 
