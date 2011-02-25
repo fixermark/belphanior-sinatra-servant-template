@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'json'
 require 'belphanior/servant/servant_config_db'
 require 'test/unit'
