@@ -17,9 +17,36 @@ module RoleBuilderUtils
     } 
     output
   end
+  def self.is_valid_identifier?(identifier)
+    identifier =~ /^[a-zA-Z][a-zA-Z0-9 ]*$/
+  end
+  def self.identifier_to_url_component(identifier)
+    identifier.gsub(/ /,"_").downcase
+  end
 end
 
 module Sinatra
+
+  module RoleDescriber
+    class BadParameterException < Exception
+    end
+    
+      # Adds a new role description. Note: this is a VERY quick-and-dirty hack;
+    # the added description isn't vetted for format conformance at all.
+    def add_role_description(description)
+      if not RoleBuilderUtils::is_valid_identifier?(description["name"])
+        raise BadParameterException, "Role name was not a valid identifier."
+      end
+      description_as_json = JSON.generate description
+      get('/role_descriptions/' + 
+        RoleBuilderUtils::identifier_to_url_component(
+        description["name"])) do
+        BelphaniorServantHelper.text_out_as_json(description_as_json)
+      end
+    end
+  end
+
+  register RoleDescriber
 
   module RoleBuilder
     class BadParameterException < Exception
@@ -27,7 +54,7 @@ module Sinatra
     def self.registered(app)
       app.set :roles, [{"name"=>"unnamed","description"=>"TODO: Fill this in", "commands"=>[] }]
       app.get '/protocol' do
-        BelphaniorServantHelper.text_out_as_json(get_roles)
+        BelphaniorServantHelper.text_out_as_json(get_implementation)
       end
 
     end

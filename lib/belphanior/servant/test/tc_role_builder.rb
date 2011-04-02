@@ -15,11 +15,36 @@ class TestRoleBuilder < Test::Unit::TestCase
 
   def setup
     app.set :roles, [{"description"=>"","commands"=>[]}]
+    @default_description = {
+      "name" => "test description",
+      "description" => "An example of a role description.",
+      "commands" => [
+                     {
+                       "name" => "test command",
+                       "description" => "An example command.",
+                       "arguments" => [
+                                       {
+                                         "name" => "test arg",
+                                         "description" => "An example argument."
+                                       }
+                                      ]
+                     }
+                    ]
+    }
     @default_usage = [
                       "GET",
                       "/path",
                       "data"]
   end
+
+  def test_role_describer_accepts_role_description
+    app.add_role_description @default_description
+    get '/role_descriptions/test_description'
+    assert last_response.ok?
+    assert_equal JSON.generate(@default_description), last_response.body
+
+  end
+
 
   def test_role_builder_utils_usage_string_to_sinatra_patch
     assert_equal "/test/:value/test/:value2",
