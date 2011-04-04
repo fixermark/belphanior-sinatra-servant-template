@@ -73,7 +73,7 @@ module Sinatra
 
     # Sets the implementation's URL
     def set_role_url(url)
-        implementation["role_url"]=url
+        implementation[0]["role_url"]=url
     end
 
     # Adds a handler at the specified URL
@@ -104,7 +104,7 @@ module Sinatra
         "path" => path,
         "data" => data
       }
-      implementation["handlers"] << new_handler
+      implementation[0]["handlers"] << new_handler
 
       # Add the method that will execute for this handler
       sinatra_path = RoleBuilderUtils::arguments_and_path_to_sinatra_path(argument_names, path)

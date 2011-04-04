@@ -46,8 +46,8 @@ class TestRoleBuilder < Test::Unit::TestCase
   
   def test_add_handler_adds_handler
     app.add_handler("test command", ["argument 1", "argument 2"], 
-      "POST", "/test/$(argument 1)/", "$(argument 2)") { |arg1, arg2|
-      "arg1 is "+arg1+" arg 2 is "+arg2
+      "POST", "/test/$(argument 1)", "$(argument 2)") { |arg1|
+      "arg1 is "+arg1+" arg 2 is "+(request.body.read)
     }
     post '/test/foo', 'bar'
     assert last_response.ok?
