@@ -57,7 +57,8 @@ class TestRoleBuilder < Test::Unit::TestCase
   def test_add_handler_updates_protocol
     app.add_handler("test command", ["argument 1"], "GET", "/test/$(argument 1)", "") {|arg1|}
     get '/protocol'
-    assert last_response.ok?
+    puts last_response.body
+    assert_equal(200, last_response.status)
   end
 
   def test_role_builder_utils_usage_string_to_sinatra_path

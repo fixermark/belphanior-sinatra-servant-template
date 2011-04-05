@@ -66,7 +66,7 @@ module Sinatra
       app.set :roles, [{"name"=>"unnamed","description"=>"TODO: Fill this in", "commands"=>[] }]
       app.set :implementation, [{"role_url"=>"", "handlers"=>[]}]
       app.get '/protocol' do
-        BelphaniorServantHelper.text_out_as_json(get_implementation)
+        BelphaniorServantHelper.text_out_as_json(JSON.dump(app.implementation))
       end
 
     end
@@ -115,11 +115,6 @@ module Sinatra
       else
         raise BadParameterException, ("Unknown HTTP method '" + http_method + "'.")
       end
-    end
-    
-    # retrieves the implementation as an object
-    def get_implementation
-      implementation
     end
   end
   register RoleBuilder
