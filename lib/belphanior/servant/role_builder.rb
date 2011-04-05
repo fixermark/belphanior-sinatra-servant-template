@@ -116,6 +116,11 @@ module Sinatra
         raise BadParameterException, ("Unknown HTTP method '" + http_method + "'.")
       end
     end
+    
+    # retrieves the implementation as an object
+    def get_implementation
+      implementation
+    end
   end
   register RoleBuilder
 end

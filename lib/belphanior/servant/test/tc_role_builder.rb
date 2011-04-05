@@ -54,6 +54,12 @@ class TestRoleBuilder < Test::Unit::TestCase
     assert_equal("arg1 is foo arg2 is bar", last_response.body)  
   end
 
+  def test_add_handler_updates_protocol
+    app.add_handler("test command", ["argument 1"], "GET", "/test/$(argument 1)", "") {|arg1|}
+    get '/protocol'
+    assert last_response.ok?
+  end
+
   def test_role_builder_utils_usage_string_to_sinatra_path
     assert_equal "/test/:value/test/:value2",
     RoleBuilderUtils.usage_string_to_sinatra_path(
@@ -81,12 +87,12 @@ class TestRoleBuilder < Test::Unit::TestCase
   # * verify that adding rule properly configures /protocol
   # TODO(mtomczak): Strip all following tests
 
-  def test_add_command_fails_on_badparams
-    assert_raise Sinatra::RoleBuilder::BadParameterException do
-      app.add_command :usage => "Test" do end
-    end
-    assert_raise Sinatra::RoleBuilder::BadParameterException do
-      app.add_command :name => "Test" do end
-    end
-  end
+#  def test_add_command_fails_on_badparams
+#    assert_raise Sinatra::RoleBuilder::BadParameterException do
+#      app.add_command :usage => "Test" do end
+#    end
+#    assert_raise Sinatra::RoleBuilder::BadParameterException do
+#      app.add_command :name => "Test" do end
+#    end
+#  end
 end
