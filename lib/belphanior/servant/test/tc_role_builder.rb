@@ -6,6 +6,35 @@ require 'json'
 
 ENV['RACK_ENV'] = 'test'
 
+# Test helper function
+# Validates that two JSON-style objects are equivalent
+# Equivalence is defined as follows:
+#   Array type: each element equivalent
+#   Dict type: For each key |k| in reference, key in value
+#    exists and value for the key is equivalent. 
+#    NOTE: This means that the input can contain 
+#    additional data, and this is acceptable.
+#   All others: Simple ruby equivalence.
+def assert_equivalent_json_objects(reference, tested)
+  assert_equal(reference.class(), tested.class())
+  if reference.class() == [].class()
+    assert_equal(reference.length, tested.length)
+    for i in 0..reference.length
+      assert_equivalent_json_objects(
+        reference[i], tested[i])
+    end
+  elsif reference.class() == {}.class()
+    reference.each do |key, value|
+      assert_equal(true, tested.has_key?(key))
+      assert_equivalent_json_objects(value, tested[key])
+    end
+  else
+    # String or number (or other type): value compare
+    assert_equal(reference, tested)  
+  end
+end
+
+
 class TestRoleBuilder < Test::Unit::TestCase
   include Rack::Test::Methods
 
@@ -37,6 +66,10 @@ class TestRoleBuilder < Test::Unit::TestCase
                       "data"]
   end
 
+  def teardown
+    app.clear_handlers
+  end
+
   def test_role_describer_accepts_role_description
     app.add_role_description @default_description
     get '/role_descriptions/test_description'
@@ -55,10 +88,21 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def test_add_handler_updates_protocol
+    app.set_role_url "/test"
     app.add_handler("test command", ["argument 1"], "GET", "/test/$(argument 1)", "") {|arg1|}
     get '/protocol'
-    puts last_response.body
     assert_equal(200, last_response.status)
+    puts last_response.body
+    assert_equivalent_json_objects(
+      [{
+         "role_url" => "/test",
+         "handlers" => [{
+                        "name" => "test command",
+                        "method" => "GET",
+                          "path" => "/test/$(argument 1)"}]
+       }],
+       JSON.parse(last_response.body))
+    # NOTE TO SELF: WIP; determine why this test is failing
   end
 
   def test_role_builder_utils_usage_string_to_sinatra_path

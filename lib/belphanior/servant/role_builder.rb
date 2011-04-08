@@ -115,6 +115,10 @@ module Sinatra
       else
         raise BadParameterException, ("Unknown HTTP method '" + http_method + "'.")
       end
+      def clear_handlers
+        # Resets the handler list. Mostly for testing.
+        set :implementation, [{"role_url"=>"", "handlers"=>[]}]
+      end
     end
   end
   register RoleBuilder
