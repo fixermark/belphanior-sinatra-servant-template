@@ -109,10 +109,6 @@ class TestRoleBuilder < Test::Unit::TestCase
       "/test/$(value)/test/$(value2)")
   end
 
-  def test_add_handler_fails_on_badparams
-    # TODO(mtomczak): implement
-  end
-
   def test_identifier_case_insensitivity
     app.set_role_url "/test"
     app.add_handler("My command", ["Cap"], "GET", "path", "data") do end
@@ -128,28 +124,5 @@ class TestRoleBuilder < Test::Unit::TestCase
                           "data" => "data"}]
        }],
        JSON.parse(last_response.body))
-
-    # TODO(mtomczak): Check /protocol and compare to expected lowercase outputs
-    # result = JSON.parse(app.get_roles)
-    # assert_equal "my command", result[0]["commands"][0]["name"]
-    # assert_equal "cap", result[0]["commands"][0]["arguments"][0]["name"]
   end
-
-  def test_handler_binding_unknown_http_method
-    # TODO(mtomczak): verify that HTTP method "FOO" raises an exceptino
-  end
-
-  # TODO(mtomczak): Add test to
-  # * verify behavior on bad parameters
-  # * verify that adding rule properly configures /protocol
-  # TODO(mtomczak): Strip all following tests
-
-#  def test_add_command_fails_on_badparams
-#    assert_raise Sinatra::RoleBuilder::BadParameterException do
-#      app.add_command :usage => "Test" do end
-#    end
-#    assert_raise Sinatra::RoleBuilder::BadParameterException do
-#      app.add_command :name => "Test" do end
-#    end
-#  end
 end
