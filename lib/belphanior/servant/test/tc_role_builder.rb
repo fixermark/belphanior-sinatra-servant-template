@@ -88,11 +88,10 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def test_add_handler_updates_protocol
-    app.set_role_url "/test"
+    app.set_role_url("/test")
     app.add_handler("test command", ["argument 1"], "GET", "/test/$(argument 1)", "") {|arg1|}
     get '/protocol'
     assert_equal(200, last_response.status)
-    puts last_response.body
     assert_equivalent_json_objects(
       [{
          "role_url" => "/test",
@@ -102,7 +101,6 @@ class TestRoleBuilder < Test::Unit::TestCase
                           "path" => "/test/$(argument 1)"}]
        }],
        JSON.parse(last_response.body))
-    # NOTE TO SELF: WIP; determine why this test is failing
   end
 
   def test_role_builder_utils_usage_string_to_sinatra_path
@@ -116,7 +114,21 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def test_identifier_case_insensitivity
+    app.set_role_url "/test"
     app.add_handler("My command", ["Cap"], "GET", "path", "data") do end
+    get '/protocol'
+    assert_equal(200, last_response.status)
+    assert_equivalent_json_objects(
+      [{
+         "role_url" => "/test",
+         "handlers" => [{
+                          "name" => "my command",
+                          "method" => "GET",
+                          "path" => "path",
+                          "data" => "data"}]
+       }],
+       JSON.parse(last_response.body))
+
     # TODO(mtomczak): Check /protocol and compare to expected lowercase outputs
     # result = JSON.parse(app.get_roles)
     # assert_equal "my command", result[0]["commands"][0]["name"]
