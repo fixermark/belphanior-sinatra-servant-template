@@ -48,12 +48,13 @@ module Sinatra
       if not RoleBuilderUtils::is_valid_identifier?(description["name"])
         raise BadParameterException, "Role name was not a valid identifier."
       end
+      name_as_identifier = RoleBuilderUtils::identifier_to_url_component(description["name"])
       description_as_json = JSON.generate description
-      get('/role_descriptions/' + 
-        RoleBuilderUtils::identifier_to_url_component(
-        description["name"])) do
+      get('/role_descriptions/' + name_as_identifier) do
         BelphaniorServantHelper.text_out_as_json(description_as_json)
       end
+      implementation[0]["role_url"] = (
+        "/role_dscriptions/" + name_as_identifier)
     end
   end
 
