@@ -93,14 +93,15 @@ class TestRoleBuilder < Test::Unit::TestCase
     get '/protocol'
     assert_equal(200, last_response.status)
     assert_equivalent_json_objects(
-      [{
-         "role_url" => "/test",
-         "handlers" => [{
-                        "name" => "test command",
-                        "method" => "GET",
-                          "path" => "/test/$(argument 1)"}]
-       }],
-       JSON.parse(last_response.body))
+      {
+        "roles" => [{
+          "role_url" => "/test",
+          "handlers" => [{
+            "name" => "test command",
+            "method" => "GET",
+            "path" => "/test/$(argument 1)"}]
+      }]},
+      JSON.parse(last_response.body))
   end
 
   def test_role_builder_utils_usage_string_to_sinatra_path
@@ -115,14 +116,15 @@ class TestRoleBuilder < Test::Unit::TestCase
     get '/protocol'
     assert_equal(200, last_response.status)
     assert_equivalent_json_objects(
-      [{
-         "role_url" => "/test",
-         "handlers" => [{
-                          "name" => "my command",
-                          "method" => "GET",
-                          "path" => "path",
-                          "data" => "data"}]
-       }],
-       JSON.parse(last_response.body))
+      {
+        "roles" => [{
+          "role_url" => "/test",
+          "handlers" => [{
+            "name" => "my command",
+            "method" => "GET",
+            "path" => "path",
+            "data" => "data"}]
+      }]},
+      JSON.parse(last_response.body))
   end
 end

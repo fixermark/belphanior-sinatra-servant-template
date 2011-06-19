@@ -54,8 +54,8 @@ module Sinatra
       get description_local_url do
         BelphaniorServantHelper.text_out_as_json(description_as_json)
       end
-      if implementation[0]["role_url"] == "" then
-        implementation[0]["role_url"] = (
+      if implementation["roles"][0]["role_url"] == "" then
+        implementation["roles"][0]["role_url"] = (
           "/role_descriptions/" + name_as_identifier)
       end
     end
@@ -66,9 +66,21 @@ module Sinatra
   module RoleBuilder
     class BadParameterException < Exception
     end
+
+    def self.empty_handlers
+      {
+        "roles" => [
+                    {
+                      "role_url" => "",
+                      "handlers" => []
+                    }
+                   ]
+      }
+    end
+        
     def self.registered(app)
       app.set :roles, [{"name"=>"unnamed","description"=>"TODO: Fill this in", "commands"=>[] }]
-      app.set :implementation, [{"role_url"=>"", "handlers"=>[]}]
+      app.set :implementation, Sinatra::RoleBuilder.empty_handlers
       app.get '/protocol' do
         BelphaniorServantHelper.text_out_as_json(JSON.dump(app.implementation))
       end
@@ -77,7 +89,7 @@ module Sinatra
 
     # Sets the implementation's URL
     def set_role_url(url)
-        implementation[0]["role_url"]=url
+        implementation["roles"][0]["role_url"]=url
     end
 
     # Adds a handler at the specified URL
@@ -108,7 +120,7 @@ module Sinatra
         "path" => path,
         "data" => data
       }
-      implementation[0]["handlers"] << new_handler
+      implementation["roles"][0]["handlers"] << new_handler
 
       # Add the method that will execute for this handler
       sinatra_path = RoleBuilderUtils::arguments_and_path_to_sinatra_path(argument_names, path)
@@ -120,8 +132,8 @@ module Sinatra
         raise BadParameterException, ("Unknown HTTP method '" + http_method + "'.")
       end
       def clear_handlers
-        # Resets the handler list. Mostly for testing.
-        set :implementation, [{"role_url"=>"", "handlers"=>[]}]
+        # Resets the handler list.
+        set :implementation, Sinatra::RoleBuilder.empty_handlers
       end
     end
   end
