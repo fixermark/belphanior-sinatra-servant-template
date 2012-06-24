@@ -11,8 +11,8 @@ ENV['RACK_ENV'] = 'test'
 # Equivalence is defined as follows:
 #   Array type: each element equivalent
 #   Dict type: For each key |k| in reference, key in value
-#    exists and value for the key is equivalent. 
-#    NOTE: This means that the input can contain 
+#    exists and value for the key is equivalent.
+#    NOTE: This means that the input can contain
 #    additional data, and this is acceptable.
 #   All others: Simple ruby equivalence.
 def assert_equivalent_json_objects(reference, tested)
@@ -30,7 +30,7 @@ def assert_equivalent_json_objects(reference, tested)
     end
   else
     # String or number (or other type): value compare
-    assert_equal(reference, tested)  
+    assert_equal(reference, tested)
   end
 end
 
@@ -43,27 +43,28 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def setup
-    app.set :roles, [{"description"=>"","commands"=>[]}]
+    app.set :roles, []
     @default_description = {
       "name" => "test description",
       "description" => "An example of a role description.",
       "commands" => [
-                     {
-                       "name" => "test command",
-                       "description" => "An example command.",
-                       "arguments" => [
-                                       {
-                                         "name" => "test arg",
-                                         "description" => "An example argument."
-                                       }
-                                      ]
-                     }
-                    ]
+        {
+          "name" => "test command",
+          "description" => "An example command.",
+          "arguments" => [
+            {
+              "name" => "test arg",
+              "description" => "An example argument."
+            }
+          ]
+        }
+      ]
     }
     @default_usage = [
-                      "GET",
-                      "/path",
-                      "data"]
+      "GET",
+      "/path",
+      "data"
+    ]
   end
 
   def teardown
@@ -76,18 +77,20 @@ class TestRoleBuilder < Test::Unit::TestCase
     assert last_response.ok?
     assert_equal JSON.generate(@default_description), last_response.body
   end
-  
+
   def test_add_handler_adds_handler
-    app.add_handler("test command", ["argument 1", "argument 2"], 
+    app.add_role_description @default_description
+    app.add_handler("test command", ["argument 1", "argument 2"],
       "POST", "/test/$(argument 1)", "$(argument 2)") { |arg1|
       "arg1 is "+arg1+" arg2 is "+(request.body.read)
     }
     post '/test/foo', 'bar'
     assert last_response.ok?
-    assert_equal("arg1 is foo arg2 is bar", last_response.body)  
+    assert_equal("arg1 is foo arg2 is bar", last_response.body)
   end
 
   def test_add_handler_updates_protocol
+    app.add_role_description @default_description
     app.set_role_url("/test")
     app.add_handler("test command", ["argument 1"], "GET", "/test/$(argument 1)", "") {|arg1|}
     get '/protocol'
@@ -111,6 +114,7 @@ class TestRoleBuilder < Test::Unit::TestCase
   end
 
   def test_identifier_case_insensitivity
+    app.add_role_description @default_description
     app.set_role_url "/test"
     app.add_handler("My command", ["Cap"], "GET", "path", "data") do end
     get '/protocol'
@@ -126,5 +130,41 @@ class TestRoleBuilder < Test::Unit::TestCase
             "data" => "data"}]
       }]},
       JSON.parse(last_response.body))
+  end
+  def test_multi_role
+    app.add_role_description @default_description
+    app.add_role_description({
+        "name" => "second role",
+        "description" => "An example of a role description.",
+        "commands" => [
+          {
+            "name" => "test command 2",
+            "description" => "An example command.",
+            "arguments" => [
+              {
+                "name" => "test arg b",
+                "description" => "An example argument."
+              }
+            ]
+          }
+        ]
+      }
+      )
+    app.add_handler("test command", ["test arg"],
+      "POST", "/test2/$(test arg)", "", 0) { |arg1|
+      "arg1 is " + arg1
+    }
+    app.add_handler("test command 2", ["test arg b"],
+      "GET", "/test3/$(test arg b)", "", 1) { |arg1|
+      "arg1b is " + arg1
+    }
+
+    post '/test2/foo', ""
+    assert last_response.ok?
+    assert_equal("arg1 is foo", last_response.body)
+
+    get '/test3/bar'
+    assert last_response.ok?
+    assert_equal("arg1b is bar", last_response.body)
   end
 end

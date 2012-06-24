@@ -1,3 +1,5 @@
+# Copyright 2012 Mark T. Tomczak
+
 require 'json'
 require 'sinatra/base'
 require 'belphanior/servant/belphanior_servant_helper'
@@ -11,12 +13,12 @@ module RoleBuilderUtils
       if substring[0,1]=="("
         substring[0]=":"
         remainder_array = substring.split(")")
-        
+
         output += (substring.split(")").join)
       else
         output += substring
       end
-    } 
+    }
     output
   end
   def self.arguments_and_path_to_sinatra_path(arguments, path)
@@ -41,8 +43,8 @@ module Sinatra
   module RoleDescriber
     class BadParameterException < Exception
     end
-    
-      # Adds a new role description. Note: this is a VERY quick-and-dirty hack;
+
+    # Adds a new role description. Note: this is a VERY quick-and-dirty hack;
     # the added description isn't vetted for format conformance at all.
     def add_role_description(description)
       if not RoleBuilderUtils::is_valid_identifier?(description["name"])
@@ -54,8 +56,14 @@ module Sinatra
       get description_local_url do
         BelphaniorServantHelper.text_out_as_json(description_as_json)
       end
-      if implementation["roles"][0]["role_url"] == "" then
-        implementation["roles"][0]["role_url"] = (
+      role_index = implementation["roles"].length
+      implementation["roles"] << {
+        "role_url" => "",
+        "handlers" => []
+      }
+
+      if implementation["roles"][role_index]["role_url"] == "" then
+        implementation["roles"][role_index]["role_url"] = (
           "/role_descriptions/" + name_as_identifier)
       end
     end
@@ -70,16 +78,11 @@ module Sinatra
     def self.empty_handlers
       {
         "roles" => [
-                    {
-                      "role_url" => "",
-                      "handlers" => []
-                    }
-                   ]
+        ]
       }
     end
-        
+
     def self.registered(app)
-      app.set :roles, [{"name"=>"unnamed","description"=>"TODO: Fill this in", "commands"=>[] }]
       app.set :implementation, Sinatra::RoleBuilder.empty_handlers
       app.get '/protocol' do
         BelphaniorServantHelper.text_out_as_json(JSON.dump(app.implementation))
@@ -88,8 +91,8 @@ module Sinatra
     end
 
     # Sets the implementation's URL
-    def set_role_url(url)
-        implementation["roles"][0]["role_url"]=url
+    def set_role_url(url, role_index=0)
+        implementation["roles"][role_index]["role_url"]=url
     end
 
     # Adds a handler at the specified URL
@@ -100,7 +103,8 @@ module Sinatra
     # - http_method: HTTP access method, one of "GET", "POST", etc.
     # - path: The path for the HTTP request (including arguments specified in $(argument name) format).
     # - data: If a POST method, the data that should be sent (including arguments specified in $(argument name) format).
-    def add_handler(command_name, argument_names, http_method, path, data, &blk)
+    # - role_index: Which role this handler should be mapped into. Assumes the role already has a description.
+    def add_handler(command_name, argument_names, http_method, path, data, role_index=0, &blk)
       # validate name, args, and method
       if not RoleBuilderUtils::is_valid_identifier? command_name
         raise BadParameterException, (command_name + " is not a valid command name.")
@@ -120,7 +124,8 @@ module Sinatra
         "path" => path,
         "data" => data
       }
-      implementation["roles"][0]["handlers"] << new_handler
+
+      implementation["roles"][role_index]["handlers"] << new_handler
 
       # Add the method that will execute for this handler
       sinatra_path = RoleBuilderUtils::arguments_and_path_to_sinatra_path(argument_names, path)
