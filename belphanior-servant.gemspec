@@ -12,5 +12,7 @@ Gem::Specification.new do |s|
               "lib/belphanior/servant/servant.rb",
               "lib/belphanior/servant/servant_config_db.rb",
               "lib/belphanior/servant/servant_config.rb" ]
+  s.add_dependency('json','>= 1.6.1')
+  s.add_dependency('sinatra','>= 1.3.1')
   s.test_files = Dir.glob('lib/belphanior/servant/test/tc_*.rb')
 end
