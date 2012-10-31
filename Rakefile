@@ -3,9 +3,6 @@ require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
 require 'rubygems/package_task'
-# TODO(mtomczak): Temporary hack while I figure out gem paths
-$: << File.dirname(__FILE__)+"/lib"
-Gem.path << File.dirname(__FILE__)
 
 desc "Run basic tests"
 Rake::TestTask::new "test" do |t|
@@ -41,6 +38,8 @@ spec = Gem::Specification.new do |s|
    For an example of the basics of a servant, consult the examples/empty.rb file or view
    the servants posted to GitHub (http://github.com/fixermark).
   EOF
+
+  s.homepage = "http://belphanior.net"
   s.files = [ "lib/belphanior/servant/belphanior_servant_helper.rb",
               "lib/belphanior/servant/role_builder.rb",
               "lib/belphanior/servant/servant.rb",
