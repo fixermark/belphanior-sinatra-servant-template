@@ -41,7 +41,8 @@ spec = Gem::Specification.new do |s|
    For an example of the basics of a servant, consult the examples/empty.rb file or view
    the servants posted to GitHub (http://github.com/fixermark).
   EOF
-  s.files = [ "lib/belphanior/servant/belphanior_servant_helper.rb",
+  s.files = [ "LICENSE",
+              "lib/belphanior/servant/belphanior_servant_helper.rb",
               "lib/belphanior/servant/role_builder.rb",
               "lib/belphanior/servant/servant.rb",
               "lib/belphanior/servant/servant_config_db.rb",
