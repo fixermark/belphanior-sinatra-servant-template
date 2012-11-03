@@ -29,7 +29,7 @@ end
 #
 spec = Gem::Specification.new do |s|
   s.name = %q{belphanior-servant}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
   s.date = %q{2012-10-30}
   s.authors = ["Mark T. Tomczak"]
   s.email = %q{iam+belphanior-servant@fixermark.com}
