@@ -29,7 +29,7 @@ end
 #
 spec = Gem::Specification.new do |s|
   s.name = %q{belphanior-servant}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
   s.date = %q{2012-10-30}
   s.authors = ["Mark T. Tomczak"]
   s.email = %q{iam+belphanior-servant@fixermark.com}
@@ -41,12 +41,14 @@ spec = Gem::Specification.new do |s|
    For an example of the basics of a servant, consult the examples/empty.rb file or view
    the servants posted to GitHub (http://github.com/fixermark).
   EOF
+  s.homepage = "http://belphanior.net"
   s.files = [ "LICENSE",
               "lib/belphanior/servant/belphanior_servant_helper.rb",
               "lib/belphanior/servant/role_builder.rb",
               "lib/belphanior/servant/servant.rb",
               "lib/belphanior/servant/servant_config_db.rb",
               "lib/belphanior/servant/servant_config.rb" ]
+  s.licenses = [ "http://www.apache.org/licenses/LICENSE-2.0" ]
   s.add_dependency('json','>= 1.6.1')
   s.add_dependency('sinatra','>= 1.3.1')
   s.test_files = Dir.glob('lib/belphanior/servant/test/tc_*.rb')
