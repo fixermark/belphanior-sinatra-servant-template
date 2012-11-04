@@ -1,0 +1,5 @@
+Belphanior-servant is a library for creating servants using Sinatra. It is
+a prerequesite for all such servants.
+
+For an example of the basics of a servant, consult the examples/empty.rb file or view
+the servants posted to GitHub (http://github.com/fixermark).

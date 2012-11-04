@@ -34,13 +34,7 @@ spec = Gem::Specification.new do |s|
   s.authors = ["Mark T. Tomczak"]
   s.email = %q{iam+belphanior-servant@fixermark.com}
   s.summary = %q{Support library for Belphanior servants written in Ruby using Sinatra.}
-  s.description = <<-EOF
-   Belphanior-servant is a library for creating servants using Sinatra. It is
-   a prerequesite for all such servants.
-
-   For an example of the basics of a servant, consult the examples/empty.rb file or view
-   the servants posted to GitHub (http://github.com/fixermark).
-  EOF
+  s.description = IO.read("README")
   s.homepage = "http://belphanior.net"
   s.files = [ "LICENSE",
               "lib/belphanior/servant/belphanior_servant_helper.rb",
