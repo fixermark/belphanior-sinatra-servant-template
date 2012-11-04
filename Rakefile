@@ -3,9 +3,6 @@ require 'rake'
 require 'rake/testtask'
 require 'rdoc/task'
 require 'rubygems/package_task'
-# TODO(mtomczak): Temporary hack while I figure out gem paths
-$: << File.dirname(__FILE__)+"/lib"
-Gem.path << File.dirname(__FILE__)
 
 desc "Run basic tests"
 Rake::TestTask::new "test" do |t|
